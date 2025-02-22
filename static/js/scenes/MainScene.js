@@ -9,7 +9,10 @@ class MainScene extends Phaser.Scene {
     }
 
     preload() {
-        // Load SVG assets directly as shapes will be drawn programmatically
+        // Загружаем спрайты для разных типов островов
+        this.load.image('forest-island', '/static/images/forest-island.png');
+        this.load.image('mountain-island', '/static/images/mountain-island.png');
+        this.load.image('mine-island', '/static/images/mine-island.png');
     }
 
     create() {

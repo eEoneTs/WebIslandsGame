@@ -13,9 +13,15 @@ class Island extends Phaser.GameObjects.Container {
     }
 
     createVisuals() {
-        // Base graphics for the island
-        this.graphics = this.scene.add.graphics();
-        this.updateVisuals();
+        // Создаем спрайт острова
+        const spriteKey = `${this.type}-island`;
+        this.sprite = this.scene.add.sprite(0, 0, spriteKey);
+        this.sprite.setScale(0.5); // Настройте масштаб под ваши спрайты
+        this.add(this.sprite);
+
+        // Добавляем выделение
+        this.selectionGraphics = this.scene.add.graphics();
+        this.add(this.selectionGraphics);
 
         // Resource counter
         this.resourceText = this.scene.add.text(0, -40, '0', {
@@ -30,64 +36,16 @@ class Island extends Phaser.GameObjects.Container {
     }
 
     updateVisuals() {
-        this.graphics.clear();
-
-        // Draw selection highlight if selected
+        this.selectionGraphics.clear();
+        
+        // Рисуем выделение если остров выбран
         if (this.selected) {
-            this.graphics.lineStyle(3, 0xffff00);
-            this.graphics.strokeRect(-35, -35, 70, 70);
+            this.selectionGraphics.lineStyle(3, 0xffff00);
+            this.selectionGraphics.strokeRect(-35, -35, 70, 70);
         }
 
-        // Draw island base (земля)
-        this.graphics.lineStyle(1, 0xd4b483);
-        this.graphics.fillStyle(0xd4b483);
-        this.graphics.fillRect(-30, -30, 60, 60);
-
-        // Draw vegetation (деревья и трава)
-        const color = this.isActive ? 0x2d572c : 0x1a3d1c;
-        const darkColor = this.isActive ? 0x1a3d1c : 0x122d14;
-
-        this.graphics.lineStyle(1, color);
-        this.graphics.fillStyle(color);
-        this.graphics.fillRect(-25, -25, 50, 50);
-
-        // Добавляем детали в зависимости от типа острова
-        switch (this.type) {
-            case 'forest':
-                // Деревья (маленькие зеленые квадраты)
-                this.graphics.fillStyle(darkColor);
-                for (let i = 0; i < 4; i++) {
-                    const x = (i % 2) * 20 - 15;
-                    const y = Math.floor(i / 2) * 20 - 15;
-                    this.graphics.fillRect(x, y, 10, 10);
-                }
-                break;
-            case 'mountain':
-                // Горы (треугольники)
-                this.graphics.fillStyle(0x808080);
-                for (let i = 0; i < 2; i++) {
-                    const x = i * 20 - 15;
-                    this.graphics.beginPath();
-                    this.graphics.moveTo(x, 10);
-                    this.graphics.lineTo(x + 15, -15);
-                    this.graphics.lineTo(x + 30, 10);
-                    this.graphics.closePath();
-                    this.graphics.fill();
-                }
-                break;
-            case 'mine':
-                // Шахта (темные круги)
-                this.graphics.fillStyle(0x4a4a4a);
-                for (let i = 0; i < 3; i++) {
-                    const x = (i % 2) * 20 - 10;
-                    const y = Math.floor(i / 2) * 20 - 10;
-                    this.graphics.fillCircle(x, y, 8);
-                }
-                break;
-        }
-
-        // Добавляем графику в контейнер
-        this.add(this.graphics);
+        // Настраиваем прозрачность в зависимости от активности
+        this.sprite.alpha = this.isActive ? 1 : 0.6;
     }
 
     setSelected(selected) {
