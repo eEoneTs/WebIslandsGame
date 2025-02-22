@@ -61,6 +61,9 @@ class Island extends Phaser.GameObjects.Container {
                 x + 8, y + 5
             );
         }
+
+        // Добавляем графику в контейнер
+        this.add(this.graphics);
     }
 
     setSelected(selected) {

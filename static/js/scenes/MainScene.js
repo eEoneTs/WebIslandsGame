@@ -122,7 +122,7 @@ class MainScene extends Phaser.Scene {
             wave.graphics.moveTo(0, wave.y);
 
             for (let x = 0; x < this.cameras.main.width; x += 30) {
-                const y = wave.y + Math.sin(x * 0.02 + wave.offset + this.time.now * wave.speed) * 5;
+                const y = wave.y + Math.sin(x * 0.02 + wave.offset + this.time.now * 0.0001) * 5;
                 if (x === 0) {
                     wave.graphics.moveTo(x, y);
                 } else {
