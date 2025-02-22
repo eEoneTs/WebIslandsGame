@@ -29,13 +29,17 @@ class MainScene extends Phaser.Scene {
     }
 
     setupInput() {
-        this.input.on('gameobject', (pointer, gameObject) => {
+        this.input.on('gameobjectdown', (pointer, gameObject) => {
             if (gameObject instanceof Island) {
                 if (this.selectedIsland) {
-                    this.tryBuildBridge(this.selectedIsland, gameObject);
+                    this.selectedIsland.setSelected(false);
+                    if (this.selectedIsland !== gameObject) {
+                        this.tryBuildBridge(this.selectedIsland, gameObject);
+                    }
                     this.selectedIsland = null;
                 } else {
                     this.selectedIsland = gameObject;
+                    gameObject.setSelected(true);
                 }
             }
         });
