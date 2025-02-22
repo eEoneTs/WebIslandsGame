@@ -49,13 +49,16 @@ class MainScene extends Phaser.Scene {
             const x = Phaser.Math.Between(margin, this.cameras.main.width - margin);
             const y = Phaser.Math.Between(margin, this.cameras.main.height - margin);
             const island = new Island(this, x, y);
+            if (i === 0) {
+                island.setActive(true); // Активируем только первый остров
+            }
             this.islands.push(island);
         }
     }
 
     setupInput() {
         this.input.on('gameobjectdown', (pointer, gameObject) => {
-            if (gameObject instanceof Island) {
+            if (gameObject instanceof Island && gameObject.isActive) {
                 if (this.selectedIsland) {
                     this.selectedIsland.setSelected(false);
                     if (this.selectedIsland !== gameObject) {
@@ -77,6 +80,7 @@ class MainScene extends Phaser.Scene {
             const bridge = new Bridge(this, island1, island2);
             this.bridges.push(bridge);
             this.resourceManager.spendWood(10);
+            island2.setActive(true); // Активируем остров после постройки моста
             this.saveGameState();
         }
     }
@@ -94,7 +98,8 @@ class MainScene extends Phaser.Scene {
             islands: this.islands.map(island => ({
                 x: island.x,
                 y: island.y,
-                resources: island.resources
+                resources: island.resources,
+                isActive: island.isActive
             })),
             bridges: this.bridges.map(bridge => ({
                 island1Index: this.islands.indexOf(bridge.island1),
@@ -109,7 +114,10 @@ class MainScene extends Phaser.Scene {
         if (savedState) {
             const gameState = JSON.parse(savedState);
             this.resourceManager.wood = gameState.wood;
-            // Restore islands and bridges state
+            gameState.islands.forEach((islandData, index) => {
+                this.islands[index].setActive(islandData.isActive);
+            });
+
         }
     }
 

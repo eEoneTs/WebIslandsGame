@@ -5,6 +5,7 @@ class Island extends Phaser.GameObjects.Container {
 
         this.resources = 0;
         this.selected = false;
+        this.isActive = false;
 
         this.createVisuals();
         this.setInteractive(new Phaser.Geom.Circle(0, 0, 30), Phaser.Geom.Circle.Contains);
@@ -42,8 +43,8 @@ class Island extends Phaser.GameObjects.Container {
         this.graphics.fillCircle(0, 0, 40);
 
         // Draw vegetation (трава и деревья)
-        this.graphics.lineStyle(1, 0x2d572c);
-        this.graphics.fillStyle(0x2d572c);
+        this.graphics.lineStyle(1, this.isActive ? 0x2d572c : 0x1a3d1c);
+        this.graphics.fillStyle(this.isActive ? 0x2d572c : 0x1a3d1c);
 
         // Основная растительность
         this.graphics.fillCircle(0, 0, 35);
@@ -54,7 +55,7 @@ class Island extends Phaser.GameObjects.Container {
             const x = Math.cos(angle) * 20;
             const y = Math.sin(angle) * 20;
 
-            this.graphics.fillStyle(0x1a3d1c);
+            this.graphics.fillStyle(this.isActive ? 0x1a3d1c : 0x122d14);
             this.graphics.fillTriangle(
                 x, y - 10,
                 x - 8, y + 5,
@@ -68,6 +69,11 @@ class Island extends Phaser.GameObjects.Container {
 
     setSelected(selected) {
         this.selected = selected;
+        this.updateVisuals();
+    }
+
+    setActive(active) {
+        this.isActive = active;
         this.updateVisuals();
     }
 
