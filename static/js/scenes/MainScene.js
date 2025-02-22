@@ -48,15 +48,15 @@ class MainScene extends Phaser.Scene {
 
         // Создаем острова в форме креста
         const positions = [
-            { x: centerX, y: centerY }, // Центр
-            { x: centerX - spacing, y: centerY }, // Левый
-            { x: centerX + spacing, y: centerY }, // Правый
-            { x: centerX, y: centerY - spacing }, // Верхний
-            { x: centerX, y: centerY + spacing }  // Нижний
+            { x: centerX, y: centerY, type: 'forest' }, // Центр
+            { x: centerX - spacing, y: centerY, type: 'mountain' }, // Левый
+            { x: centerX + spacing, y: centerY, type: 'mine' }, // Правый
+            { x: centerX, y: centerY - spacing, type: 'forest' }, // Верхний
+            { x: centerX, y: centerY + spacing, type: 'mountain' }  // Нижний
         ];
 
         positions.forEach((pos, index) => {
-            const island = new Island(this, pos.x, pos.y);
+            const island = new Island(this, pos.x, pos.y, pos.type);
             if (index === 0) {
                 island.setActive(true); // Активируем только центральный остров
             }
