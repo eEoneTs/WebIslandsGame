@@ -96,6 +96,7 @@ class Island extends Phaser.GameObjects.Container {
     }
 
     setActive(active) {
+        console.log('Setting island active:', active); // Debug log
         this.isActive = active;
         this.updateVisuals();
     }
@@ -105,6 +106,7 @@ class Island extends Phaser.GameObjects.Container {
     }
 
     generateResource() {
+        console.log('Generating resource for island'); // Debug log
         this.resources++;
         this.resourceText.setText(this.resources.toString());
         this.scene.resourceManager.addWood(1);

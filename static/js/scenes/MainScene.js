@@ -58,6 +58,7 @@ class MainScene extends Phaser.Scene {
         positions.forEach((pos, index) => {
             const island = new Island(this, pos.x, pos.y, pos.type);
             if (index === 0) {
+                console.log('Activating central island'); // Debug log
                 island.setActive(true); // Активируем только центральный остров
             }
             this.islands.push(island);
@@ -66,18 +67,21 @@ class MainScene extends Phaser.Scene {
 
     setupInput() {
         this.input.on('gameobjectdown', (pointer, gameObject) => {
-            if (gameObject instanceof Island && gameObject.isActive) {
-                if (this.selectedIsland) {
-                    this.selectedIsland.setSelected(false);
-                    if (this.selectedIsland !== gameObject) {
-                        this.tryBuildBridge(this.selectedIsland, gameObject);
+            if (gameObject instanceof Island) {
+                console.log('Island clicked, active:', gameObject.isActive); // Debug log
+                if (gameObject.isActive) {
+                    if (this.selectedIsland) {
+                        this.selectedIsland.setSelected(false);
+                        if (this.selectedIsland !== gameObject) {
+                            this.tryBuildBridge(this.selectedIsland, gameObject);
+                        }
+                        this.selectedIsland = null;
+                    } else {
+                        this.selectedIsland = gameObject;
+                        gameObject.setSelected(true);
+                        // Generate resource on click
+                        gameObject.generateResource();
                     }
-                    this.selectedIsland = null;
-                } else {
-                    this.selectedIsland = gameObject;
-                    gameObject.setSelected(true);
-                    // Generate resource on click
-                    gameObject.generateResource();
                 }
             }
         });
