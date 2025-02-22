@@ -1,0 +1,13 @@
+[workflows]
+runButton = "Run"
+
+[[workflows.workflow]]
+name = "Run"
+author = 39892475
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx http-server -p 3000 --bind 0.0.0.0"
+
+[nix]
+channel = "stable-24_05"
