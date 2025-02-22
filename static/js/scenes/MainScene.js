@@ -5,6 +5,7 @@ class MainScene extends Phaser.Scene {
         this.bridges = [];
         this.resourceManager = null;
         this.selectedIsland = null;
+        this.waves = [];
     }
 
     preload() {
@@ -22,28 +23,31 @@ class MainScene extends Phaser.Scene {
 
     createWaterBackground() {
         const graphics = this.add.graphics();
-        graphics.fillStyle(0x4444ff, 0.3); // Светло-синий цвет для воды
+        graphics.fillStyle(0x2389da, 0.6); // Более реалистичный голубой цвет для воды
         graphics.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
 
-        // Добавляем волны
-        for (let i = 0; i < 10; i++) {
+        // Создаем волны с анимацией
+        for (let i = 0; i < 15; i++) {
             const wave = this.add.graphics();
-            wave.lineStyle(2, 0x6666ff, 0.2);
+            wave.lineStyle(2, 0x3399ff, 0.3);
             const y = Phaser.Math.Between(0, this.cameras.main.height);
-            wave.beginPath();
-            wave.moveTo(0, y);
-            for (let x = 0; x < this.cameras.main.width; x += 30) {
-                wave.lineTo(x, y + Math.sin(x * 0.05) * 5);
-            }
-            wave.strokePath();
+            const wave_obj = {
+                graphics: wave,
+                y: y,
+                offset: Phaser.Math.Between(0, Math.PI * 2),
+                speed: 0.02 + Math.random() * 0.02
+            };
+            this.waves.push(wave_obj);
         }
     }
 
     generateIslands() {
         const numIslands = 5;
+        // Отступы от краев экрана
+        const margin = 100;
         for (let i = 0; i < numIslands; i++) {
-            const x = Phaser.Math.Between(100, 700);
-            const y = Phaser.Math.Between(100, 500);
+            const x = Phaser.Math.Between(margin, this.cameras.main.width - margin);
+            const y = Phaser.Math.Between(margin, this.cameras.main.height - margin);
             const island = new Island(this, x, y);
             this.islands.push(island);
         }
@@ -110,6 +114,24 @@ class MainScene extends Phaser.Scene {
     }
 
     update() {
+        // Анимация волн
+        this.waves.forEach(wave => {
+            wave.graphics.clear();
+            wave.graphics.lineStyle(2, 0x3399ff, 0.3);
+            wave.graphics.beginPath();
+            wave.graphics.moveTo(0, wave.y);
+
+            for (let x = 0; x < this.cameras.main.width; x += 30) {
+                const y = wave.y + Math.sin(x * 0.02 + wave.offset + this.time.now * wave.speed) * 5;
+                if (x === 0) {
+                    wave.graphics.moveTo(x, y);
+                } else {
+                    wave.graphics.lineTo(x, y);
+                }
+            }
+            wave.graphics.strokePath();
+        });
+
         this.islands.forEach(island => island.update());
         this.resourceManager.update();
     }
