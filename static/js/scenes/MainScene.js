@@ -72,19 +72,18 @@ class MainScene extends Phaser.Scene {
         this.input.on('gameobjectdown', (pointer, gameObject) => {
             if (gameObject instanceof Island) {
                 console.log('Island clicked, active:', gameObject.isActive); // Debug log
-                if (gameObject.isActive) {
-                    if (this.selectedIsland) {
-                        this.selectedIsland.setSelected(false);
-                        if (this.selectedIsland !== gameObject) {
-                            this.tryBuildBridge(this.selectedIsland, gameObject);
-                        }
-                        this.selectedIsland = null;
-                    } else {
-                        this.selectedIsland = gameObject;
-                        gameObject.setSelected(true);
-                        // Generate resource on click
-                        gameObject.generateResource();
+                if (this.selectedIsland) {
+                    // Если уже есть выбранный остров
+                    if (this.selectedIsland !== gameObject && this.selectedIsland.isActive) {
+                        this.tryBuildBridge(this.selectedIsland, gameObject);
                     }
+                    this.selectedIsland.setSelected(false);
+                    this.selectedIsland = null;
+                } else if (gameObject.isActive) {
+                    // Выбираем новый остров только если он активен
+                    this.selectedIsland = gameObject;
+                    gameObject.setSelected(true);
+                    gameObject.generateResource();
                 }
             }
         });
