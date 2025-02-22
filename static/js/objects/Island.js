@@ -4,8 +4,6 @@ class Island extends Phaser.GameObjects.Container {
         scene.add.existing(this);
 
         this.resources = 0;
-        this.resourceTimer = 0;
-        this.resourceInterval = 5000; // Changed to 5 seconds
         this.selected = false;
 
         this.createVisuals();
@@ -18,9 +16,12 @@ class Island extends Phaser.GameObjects.Container {
         this.updateVisuals();
 
         // Resource counter
-        this.resourceText = this.scene.add.text(0, 0, '0', {
+        this.resourceText = this.scene.add.text(0, -40, '0', {
             fontSize: '16px',
-            fill: '#ffffff'
+            fill: '#ffffff',
+            backgroundColor: '#000000',
+            padding: { x: 4, y: 4 },
+            borderRadius: 5
         });
         this.resourceText.setOrigin(0.5);
         this.add(this.resourceText);
@@ -32,14 +33,34 @@ class Island extends Phaser.GameObjects.Container {
         // Draw selection highlight if selected
         if (this.selected) {
             this.graphics.lineStyle(3, 0xffff00);
-            this.graphics.strokeCircle(0, 0, 35);
+            this.graphics.strokeCircle(0, 0, 45);
         }
 
-        // Draw island
-        this.graphics.lineStyle(2, 0x00ff00);
+        // Draw island base (песок)
+        this.graphics.lineStyle(1, 0xd4b483);
+        this.graphics.fillStyle(0xd4b483);
+        this.graphics.fillCircle(0, 0, 40);
+
+        // Draw vegetation (трава и деревья)
+        this.graphics.lineStyle(1, 0x2d572c);
         this.graphics.fillStyle(0x2d572c);
-        this.graphics.fillCircle(0, 0, 30);
-        this.graphics.strokeCircle(0, 0, 30);
+
+        // Основная растительность
+        this.graphics.fillCircle(0, 0, 35);
+
+        // Маленькие деревья
+        for (let i = 0; i < 5; i++) {
+            const angle = (i / 5) * Math.PI * 2;
+            const x = Math.cos(angle) * 20;
+            const y = Math.sin(angle) * 20;
+
+            this.graphics.fillStyle(0x1a3d1c);
+            this.graphics.fillTriangle(
+                x, y - 10,
+                x - 8, y + 5,
+                x + 8, y + 5
+            );
+        }
     }
 
     setSelected(selected) {
@@ -48,16 +69,12 @@ class Island extends Phaser.GameObjects.Container {
     }
 
     update() {
-        const time = this.scene.time.now;
-        if (time > this.resourceTimer) {
-            this.generateResource();
-            this.resourceTimer = time + this.resourceInterval;
-        }
+        // Removed automatic resource generation
     }
 
     generateResource() {
         this.resources++;
         this.resourceText.setText(this.resources.toString());
-        this.scene.resourceManager.addWood(1); // Changed to add only 1 wood
+        this.scene.resourceManager.addWood(1);
     }
 }

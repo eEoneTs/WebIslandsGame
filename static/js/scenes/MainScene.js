@@ -12,10 +12,31 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
+        // Add water background
+        this.createWaterBackground();
         this.resourceManager = new ResourceManager(this);
         this.generateIslands();
         this.setupInput();
         this.loadGameState();
+    }
+
+    createWaterBackground() {
+        const graphics = this.add.graphics();
+        graphics.fillStyle(0x4444ff, 0.3); // Светло-синий цвет для воды
+        graphics.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
+
+        // Добавляем волны
+        for (let i = 0; i < 10; i++) {
+            const wave = this.add.graphics();
+            wave.lineStyle(2, 0x6666ff, 0.2);
+            const y = Phaser.Math.Between(0, this.cameras.main.height);
+            wave.beginPath();
+            wave.moveTo(0, y);
+            for (let x = 0; x < this.cameras.main.width; x += 30) {
+                wave.lineTo(x, y + Math.sin(x * 0.05) * 5);
+            }
+            wave.strokePath();
+        }
     }
 
     generateIslands() {
@@ -40,6 +61,8 @@ class MainScene extends Phaser.Scene {
                 } else {
                     this.selectedIsland = gameObject;
                     gameObject.setSelected(true);
+                    // Generate resource on click
+                    gameObject.generateResource();
                 }
             }
         });
