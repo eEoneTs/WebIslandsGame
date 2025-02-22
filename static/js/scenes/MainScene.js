@@ -42,18 +42,26 @@ class MainScene extends Phaser.Scene {
     }
 
     generateIslands() {
-        const numIslands = 5;
-        // Отступы от краев экрана
-        const margin = 100;
-        for (let i = 0; i < numIslands; i++) {
-            const x = Phaser.Math.Between(margin, this.cameras.main.width - margin);
-            const y = Phaser.Math.Between(margin, this.cameras.main.height - margin);
-            const island = new Island(this, x, y);
-            if (i === 0) {
-                island.setActive(true); // Активируем только первый остров
+        const centerX = this.cameras.main.width / 2;
+        const centerY = this.cameras.main.height / 2;
+        const spacing = 200; // Расстояние между островами
+
+        // Создаем острова в форме креста
+        const positions = [
+            { x: centerX, y: centerY }, // Центр
+            { x: centerX - spacing, y: centerY }, // Левый
+            { x: centerX + spacing, y: centerY }, // Правый
+            { x: centerX, y: centerY - spacing }, // Верхний
+            { x: centerX, y: centerY + spacing }  // Нижний
+        ];
+
+        positions.forEach((pos, index) => {
+            const island = new Island(this, pos.x, pos.y);
+            if (index === 0) {
+                island.setActive(true); // Активируем только центральный остров
             }
             this.islands.push(island);
-        }
+        });
     }
 
     setupInput() {
@@ -117,7 +125,6 @@ class MainScene extends Phaser.Scene {
             gameState.islands.forEach((islandData, index) => {
                 this.islands[index].setActive(islandData.isActive);
             });
-
         }
     }
 

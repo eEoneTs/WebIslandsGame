@@ -8,7 +8,7 @@ class Island extends Phaser.GameObjects.Container {
         this.isActive = false;
 
         this.createVisuals();
-        this.setInteractive(new Phaser.Geom.Circle(0, 0, 30), Phaser.Geom.Circle.Contains);
+        this.setInteractive(new Phaser.Geom.Rectangle(-30, -30, 60, 60), Phaser.Geom.Rectangle.Contains);
     }
 
     createVisuals() {
@@ -34,33 +34,28 @@ class Island extends Phaser.GameObjects.Container {
         // Draw selection highlight if selected
         if (this.selected) {
             this.graphics.lineStyle(3, 0xffff00);
-            this.graphics.strokeCircle(0, 0, 45);
+            this.graphics.strokeRect(-35, -35, 70, 70);
         }
 
-        // Draw island base (песок)
+        // Draw island base (земля)
         this.graphics.lineStyle(1, 0xd4b483);
         this.graphics.fillStyle(0xd4b483);
-        this.graphics.fillCircle(0, 0, 40);
+        this.graphics.fillRect(-30, -30, 60, 60);
 
-        // Draw vegetation (трава и деревья)
-        this.graphics.lineStyle(1, this.isActive ? 0x2d572c : 0x1a3d1c);
-        this.graphics.fillStyle(this.isActive ? 0x2d572c : 0x1a3d1c);
+        // Draw vegetation (деревья и трава)
+        const color = this.isActive ? 0x2d572c : 0x1a3d1c;
+        const darkColor = this.isActive ? 0x1a3d1c : 0x122d14;
 
-        // Основная растительность
-        this.graphics.fillCircle(0, 0, 35);
+        this.graphics.lineStyle(1, color);
+        this.graphics.fillStyle(color);
+        this.graphics.fillRect(-25, -25, 50, 50);
 
-        // Маленькие деревья
-        for (let i = 0; i < 5; i++) {
-            const angle = (i / 5) * Math.PI * 2;
-            const x = Math.cos(angle) * 20;
-            const y = Math.sin(angle) * 20;
-
-            this.graphics.fillStyle(this.isActive ? 0x1a3d1c : 0x122d14);
-            this.graphics.fillTriangle(
-                x, y - 10,
-                x - 8, y + 5,
-                x + 8, y + 5
-            );
+        // Добавляем детали (маленькие квадраты как деревья)
+        this.graphics.fillStyle(darkColor);
+        for (let i = 0; i < 4; i++) {
+            const x = (i % 2) * 20 - 15;
+            const y = Math.floor(i / 2) * 20 - 15;
+            this.graphics.fillRect(x, y, 10, 10);
         }
 
         // Добавляем графику в контейнер
